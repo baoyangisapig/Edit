@@ -12,7 +12,7 @@ public class HelperUtils {
   /**
    * Euclidean distance
    */
-  public double getEuclideanDis(Point p1, Point p2) {
+  public double getEuclidDistance(Point p1, Point p2) {
     double count_dis = 0;
     double[] p1_local_array = p1.getCoordinate();
     double[] p2_local_array = p2.getCoordinate();

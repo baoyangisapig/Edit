@@ -16,11 +16,6 @@ public class Kmeans {
   private Cluster[] clusters;
 
   /**
-   * Centers of the K clusters.
-   */
-  private Point[] clusterCenters;
-
-  /**
    * Points of this KMeans.
    */
   private Point[] points;
@@ -52,6 +47,13 @@ public class Kmeans {
     initData(x.length, x, y);
   }
 
+  /**
+   * Init K-means.
+   *
+   * @param length Length of input data.
+   * @param x      X coordinates.
+   * @param y      Y coordinates.
+   */
   private void initData(int length, double[] x, double[] y) {
     utils = new HelperUtils();
 
@@ -76,39 +78,35 @@ public class Kmeans {
     for (int num : set) {
       centerIndex[k++] = num;
     }
-    clusterCenters = new Point[k];
-    for (int i = 0; i < k; i++) {
-      clusterCenters[i] = new Point(new double[]{x[centerIndex[i]], y[centerIndex[i]]});
-    }
 
     // Initialize clusters.
     clusters = new Cluster[k];
     for (int i = 0; i < k; i++) {
-      clusters[i] = new Cluster(i, clusterCenters[i]);
+      Point curCenter = new Point(new double[]{x[centerIndex[i]], y[centerIndex[i]]});
+      clusters[i] = new Cluster(i, curCenter);
     }
   }
 
   /**
-   * Allocate the best cluster for each points.
+   * Traverse points and arrange them to the best clusters.
    */
   private void clustering() {
-    for (int i = 0; i < points.length; i++) {
-      double minDis = Integer.MAX_VALUE;
-      for (int j = 0; j < clusters.length; j++) {
-        double tmpDis = (double) Math.min(utils.getEuclideanDis(points[i], clusters[j].getCenter()), minDis);
-        if (tmpDis < minDis) {
-          minDis = tmpDis;
-          points[i].setClusterId(j);
-          points[i].setDist(tmpDis);
-        }
-      }
-    }
-    // Clear all the clusters.
+    // Clear clusters.
     for (int i = 0; i < clusters.length; i++) {
       clusters[i].getMembers().clear();
     }
-    // Update all the points into the corresponding cluster.
+    // Arrange points to clusters.
     for (int i = 0; i < points.length; i++) {
+      double minDistance = Integer.MAX_VALUE;
+      for (int j = 0; j < clusters.length; j++) {
+        double distance = Math.min(utils.getEuclidDistance(points[i], clusters[j].getCenter())
+                , minDistance);
+        if (distance < minDistance) {
+          minDistance = distance;
+          points[i].setClusterId(j);
+          points[i].setDist(distance);
+        }
+      }
       int id = points[i].getClusterid();
       clusters[id].addPoint(points[i]);
     }
@@ -132,7 +130,7 @@ public class Kmeans {
 
       double ne = 0;
       for (int j = 0; j < clusters[i].getMembers().size(); j++) {
-        ne += utils.getEuclideanDis(clusters[i].getMembers().get(j), new Point(newCenter));
+        ne += utils.getEuclidDistance(clusters[i].getMembers().get(j), new Point(newCenter));
       }
       ne /= clusters[i].getMembers().size();
 
