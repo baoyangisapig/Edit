@@ -61,22 +61,16 @@ public class CreateDataSet{
       double x = rand.nextDouble()+rand.nextInt(range);
       rand = new Random();
       double y = rand.nextDouble()+rand.nextInt(range);
-      if(t.ptLineDist(x,y)<40){
-        res[i][0] = x;
-        res[i][1] = y;
-        k++;
+      while (t.ptLineDist(x, y) >= 40) {
+        rand = new Random();
+        x = rand.nextDouble()+rand.nextInt(range);
+        rand = new Random();
+        y = rand.nextDouble()+rand.nextInt(range);
       }
+      res[i][0] = x;
+      res[i][1] = y;
     }
-    double[][] p = new double[k][2];
-    for(int i = 0;i<k;i++){
-      if(res[i][0]!=0){
-        p[i][0] = res[i][0];
-        p[i][1] = res[i][1];
-      }
-    }
-
-
-    return p;
+    return res;
   }
   //DRAW RANDOM TESTCASE
   public static double[][] randomTest(int range,int num){
@@ -105,8 +99,10 @@ public class CreateDataSet{
 
 
   public static void main(String[] args) throws Exception {
-    double[][] a= kmeansTest(4,400,100);
-    writeFileContext(a,"src\\data\\1.txt");
+//    double[][] a= kmeansTest(4,400,100);
+//    writeFileContext(a,"1.txt");
+    double[][] a = linearRegTest(0, 0, 200, 200, 400, 100);
+    writeFileContext(a,"1.txt");
   }
 
 }
