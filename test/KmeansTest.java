@@ -24,13 +24,12 @@ public class KmeansTest {
   @Test
   public void testKmeansConstructor() {
 
-    //String filePath = "./src/data/clusterdata-3.txt";
-    String filePath = "./src/data/k_8.txt";
+    String filePath = "./src/data/k_4.txt";
 
     double[] X = HelperUtils.getX(filePath);
     double[] Y = HelperUtils.getY(filePath);
 
-    Kmeans kmeans = new Kmeans(8, X, Y);
+    Kmeans kmeans = new Kmeans(4, X, Y);
     kmeans.run();
     kmeans.drawOutput("kmeans.png");
   }

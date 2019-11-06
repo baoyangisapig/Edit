@@ -1,40 +1,37 @@
 import java.util.ArrayList;
 import java.util.List;
 
+
 /**
- * @program: Assignment6
- * @description:
- * @author: Nan Sun
- * @create: 2019-10-29 18:56
- **/
+ * the class represents the Cluster.
+ *
+ * @Author Yang Bao & YiMing Chu
+ */
 
 public class Cluster {
   private int id;
   private Point center;
-  private List<Point> members = new ArrayList<>();
-  private double err;
+  private List<Point> groups = new ArrayList<>();
+  private double dif;
 
   public Cluster(int id, Point center) {
     this.id = id;
     this.center = center;
-    this.err = Double.MAX_VALUE;
-  }
-
-  public Cluster(int id, Point center, List<Point> members) {
-    this.id = id;
-    this.center = center;
-    this.members = members;
-    this.err = Double.MAX_VALUE;
+    this.dif = Double.MAX_VALUE;
   }
 
   public void addPoint(Point newPoint) {
-    if (!members.contains(newPoint)) {
-      members.add(newPoint);
+    if (!groups.contains(newPoint)) {
+      groups.add(newPoint);
     }
   }
 
-  public int getId() {
-    return id;
+  public double getDif() {
+    return dif;
+  }
+
+  public void setDif(double dif) {
+    this.dif = dif;
   }
 
   public Point getCenter() {
@@ -45,15 +42,7 @@ public class Cluster {
     this.center = center;
   }
 
-  public List<Point> getMembers() {
-    return members;
-  }
-
-  public double getErr() {
-    return err;
-  }
-
-  public void setErr(double err){
-    this.err = err;
+  public List<Point> getGroups() {
+    return groups;
   }
 }

@@ -94,7 +94,7 @@ public class Kmeans {
 
     // Clear clusters.
     for (int i = 0; i < clusters.length; i++) {
-      clusters[i].getMembers().clear();
+      clusters[i].getGroups().clear();
     }
 
     // Arrange points to clusters.
@@ -123,27 +123,27 @@ public class Kmeans {
     boolean oneMoreTime = false;
     for (int i = 0; i < clusters.length; i++) {
       double[] newCenter = new double[2];
-      for (int j = 0; j < clusters[i].getMembers().size(); j++) {
-        newCenter[0] += clusters[i].getMembers().get(j).getCoordinate()[0];
-        newCenter[1] += clusters[i].getMembers().get(j).getCoordinate()[1];
+      for (int j = 0; j < clusters[i].getGroups().size(); j++) {
+        newCenter[0] += clusters[i].getGroups().get(j).getCoordinate()[0];
+        newCenter[1] += clusters[i].getGroups().get(j).getCoordinate()[1];
       }
-      newCenter[0] /= clusters[i].getMembers().size();
-      newCenter[1] /= clusters[i].getMembers().size();
+      newCenter[0] /= clusters[i].getGroups().size();
+      newCenter[1] /= clusters[i].getGroups().size();
 
       double ne = 0;
-      for (int j = 0; j < clusters[i].getMembers().size(); j++) {
-        ne += utils.getEuclidDistance(clusters[i].getMembers().get(j), new Point(newCenter));
+      for (int j = 0; j < clusters[i].getGroups().size(); j++) {
+        ne += utils.getEuclidDistance(clusters[i].getGroups().get(j), new Point(newCenter));
       }
-      ne /= clusters[i].getMembers().size();
+      ne /= clusters[i].getGroups().size();
 
       // If ne is greater than threshold, need calculate one more time.
-      if (Math.abs(ne - clusters[i].getErr()) / clusters[i].getErr() > 0.0001) {
+      if (Math.abs(ne - clusters[i].getDif()) / clusters[i].getDif() > 0.0001) {
         oneMoreTime = true;
       }
       // Update center.
       clusters[i].setCenter(new Point(newCenter));
       // Update error.
-      clusters[i].setErr(ne);
+      clusters[i].setDif(ne);
     }
     return oneMoreTime;
   }
@@ -197,8 +197,8 @@ public class Kmeans {
 
     for (Cluster cluster : clusters) {
       Color color = HelperUtils.randomColorGenerator();
-      for (int j = 0; j < cluster.getMembers().size(); j++) {
-        double[] pos = cluster.getMembers().get(j).getCoordinate();
+      for (int j = 0; j < cluster.getGroups().size(); j++) {
+        double[] pos = cluster.getGroups().get(j).getCoordinate();
         plotter.addPoint((int) pos[0], (int) pos[1], color);
       }
     }
@@ -217,7 +217,7 @@ public class Kmeans {
   private double getErr() {
     double e = 0;
     for (Cluster c : clusters) {
-      e += c.getErr();
+      e += c.getDif();
     }
     return e;
   }
