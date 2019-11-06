@@ -11,7 +11,7 @@ import java.util.List;
 public class Cluster {
   private int id;
   private Point center;
-  private List<Point> members = new ArrayList<Point>();
+  private List<Point> members = new ArrayList<>();
   private double err;
 
   public Cluster(int id, Point center) {
