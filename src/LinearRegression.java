@@ -1,104 +1,79 @@
 import java.io.IOException;
 
 /**
- * @program: Assignment6
- * @description:
- * @author: Nan Sun
- * @create: 2019-10-29 17:55
- **/
+ * The algorithm to simulate linearRegression.
+ *
+ * @Author Yang Bao&YiMing Chu
+ */
 
 public class LinearRegression {
-
-  private double a;
-  private double b;
-  private double c;
-
-  private double[] X;
-  private double[] Y;
+  final double X1 = -400;
+  final double X2 = 400;
+  private double p1;
+  private double p2;
+  private double p3;
+  final int Width = 400;
+  final int Height = 400;
+  final int xmin=-300;
+  final int xmax=300;
+  final int ymin=-350;
+  final int ymax=350;
+  private double[] OX;
+  private double[] OY;
 
   /**
-   * Performs a linear regression on the data points {@code (y[i], x[i])}.
-   *
-   * @param x the values of the predictor variable
-   * @param y the corresponding values of the response variable
+   * The Constructor for LinearRegression.
+   * @param x coordinate x.
+   * @param y coordinate y.
    */
   public LinearRegression(double[] x, double[] y) {
-    // Initialize the data
-    this.X = x;
-    this.Y = y;
-
+    this.OX = x;
+    this.OY = y;
     if (x.length != y.length) {
-      throw new IllegalArgumentException("array lengths are not equal");
+      throw new IllegalArgumentException("the length is not equal");
     }
     int len = x.length;
-
-    // first pass
-    double sumx = 0.0, sumy = 0.0;
+    double sum_x = 0.0, sum_y = 0.0;
     for (int i = 0; i < len; i++) {
-      sumx += x[i];
-      sumy += y[i];
+      sum_x += x[i];
+      sum_y += y[i];
     }
-    double xbar = sumx / len;
-    double ybar = sumy / len;
-
-    // second pass: compute summary statistics
-    double Sxx = 0.0, Syy = 0.0, Sxy = 0.0;
+    double aver_x = sum_x / len;
+    double aver_y = sum_y / len;
+    double f1 = 0.0, f2 = 0.0, f3 = 0.0;
     for (int i = 0; i < len; i++) {
-      Sxx += (x[i] - xbar) * (x[i] - xbar);
-      Syy += (y[i] - ybar) * (y[i] - ybar);
-      Sxy += (x[i] - xbar) * (y[i] - ybar);
+      f1 += (x[i] - aver_x) * (x[i] - aver_x);
+      f2 += (y[i] - aver_y) * (y[i] - aver_y);
+      f3 += (x[i] - aver_x) * (y[i] - aver_y);
     }
-
-    // third pass: calculate d
-    double d = 2 * Sxy / (Sxx - Syy);
-
-    // fourth pass: calculate theta
-    // iteye.com/blog/elingwange-1550707
+    double d = 2 * f3 / (f1 - f2);
     double t = Math.atan(d);
-
-    // fifth pass: make f(t) positive
-    // 𝑓(𝑡)=(𝑠𝑦𝑦−𝑠𝑥𝑥)∗𝑐𝑜𝑠(𝑡)−2∗𝑠𝑥𝑦∗𝑠𝑖𝑛(𝑡)
-    double f = (Syy - Sxx) * Math.cos(t) - 2 * Sxy * Math.sin(t);
-    if (f <= 0) {
-      t += Math.toRadians(180.0);
-    }
-
-    // sixth pass:
-    a = Math.cos(t / 2);
-    b = Math.sin(t / 2);
-    c = -a * xbar - b * ybar;
-
-  }
-
-  public double[] getPara() {
-    return new double[]{a, b, c};
+    double f = (f2 - f1) * Math.cos(t) - 2 * f3 * Math.sin(t);
+    t=f<=0?t+Math.toRadians(180.0):t;
+    p1 = Math.cos(t / 2);
+    p2 = Math.sin(t / 2);
+    p3 = -p1 * aver_x - p2 * aver_y;
   }
 
   /**
-   * Output drawing function.
-   *
-   * @param outputPath the file path of the output path.
+   * the function to draw the image.
+   * @param outputPath the path of dataset.
    */
   public void drawOutput(String outputPath) {
-    double givenX1 = -300;
-    double givenX2 = 300;
-    double[] point1 = new double[]{givenX1, (-c - a * givenX1) / b};
-    double[] point2 = new double[]{givenX2, (-c - a * givenX2) / b};
-    // Set the graph size
+    double[] point1 = new double[]{X1, (-p3 - p1 * X1) / p2};
+    double[] point2 = new double[]{X2, (-p3 - p1 * X2) / p2};
     ImagePlotter plotter = new ImagePlotter();
-    plotter.setWidth(400);
-    plotter.setHeight(400);
-    plotter.setDimensions(-300, 300, -350, 350);
-    // Add data set points
-    for (int i = 0; i < X.length; i++) {
-      plotter.addPoint((int) X[i], (int) Y[i]);
+    plotter.setWidth(Width);
+    plotter.setHeight(Height);
+    plotter.setDimensions(xmin, xmax, ymin, ymax);
+    for (int i = 0; i < OX.length; i++) {
+      plotter.addPoint((int) OX[i], (int) OY[i]);
     }
-    // Add the fitted line
     plotter.addLine((int) point1[0], (int) point1[1], (int) point2[0], (int) point2[1]);
     try {
       plotter.write(outputPath);
     } catch (IOException e) {
-      System.out.println(e);
+      System.out.println(e.toString());
     }
   }
 }
