@@ -91,10 +91,12 @@ public class Kmeans {
    * Traverse points and arrange them to the best clusters.
    */
   private void clustering() {
+
     // Clear clusters.
     for (int i = 0; i < clusters.length; i++) {
       clusters[i].getMembers().clear();
     }
+
     // Arrange points to clusters.
     for (int i = 0; i < points.length; i++) {
       double minDistance = Integer.MAX_VALUE;
@@ -118,9 +120,9 @@ public class Kmeans {
    * @return if need further iteration.
    */
   private boolean calculateCenter() {
-    boolean ifNeedIter = false;
+    boolean oneMoreTime = false;
     for (int i = 0; i < clusters.length; i++) {
-      double[] newCenter = new double[2];  // 2-dimension
+      double[] newCenter = new double[2];
       for (int j = 0; j < clusters[i].getMembers().size(); j++) {
         newCenter[0] += clusters[i].getMembers().get(j).getCoordinate()[0];
         newCenter[1] += clusters[i].getMembers().get(j).getCoordinate()[1];
@@ -134,37 +136,34 @@ public class Kmeans {
       }
       ne /= clusters[i].getMembers().size();
 
-      // If the relative error is greater the threshold, more iterations are needed
+      // If ne is greater than threshold, need calculate one more time.
       if (Math.abs(ne - clusters[i].getErr()) / clusters[i].getErr() > 0.0001) {
-        ifNeedIter = true;
+        oneMoreTime = true;
       }
-      // Set the new center
+      // Update center.
       clusters[i].setCenter(new Point(newCenter));
-      // Set the new error
+      // Update error.
       clusters[i].setErr(ne);
     }
-    return ifNeedIter;
+    return oneMoreTime;
   }
 
   /**
-   * Run the process of Kmeans.
+   * Provoke the k-means process.
    */
   public void run() {
-    int iterCnt = 0;
     for (int i = 0; i < MAX_ITERATION_TIME; i++) {
       clustering();  // Cluster all the points
       if (!calculateCenter()) {
         break;
       }
-      iterCnt++;
     }
-    System.out.println(String.format("Iteration Times: %d", iterCnt));
   }
 
   /**
-   * Output drawing function.
+   * Output visualized result.
    *
-   * @param outputPath the file path of the output path.
+   * @param outputPath Output path.
    */
   public void drawOutput(String outputPath) {
     ImagePlotter plotter = new ImagePlotter();
@@ -211,10 +210,9 @@ public class Kmeans {
   }
 
   /**
-   * Get the error for the Kmeans, where error is the average distance of the points and their
-   * cluster.
+   * Get error of k-means, where error is the average distance between points and their clusters.
    *
-   * @return the error
+   * @return Error.
    */
   private double getErr() {
     double e = 0;
@@ -227,28 +225,26 @@ public class Kmeans {
   /**
    * Run ransac for certain times.
    *
-   * @param k         the k for K means
-   * @param iterTimes the given iterate times
-   * @param path      the input file path
-   * @return the best kmeans model
+   * @param k         Constant k of k-means.
+   * @param iterTimes Times for iteration.
+   * @param path      Input file path.
+   * @return Best model for k-means.
    */
   public static Kmeans runRANSAC(int k, int iterTimes, String path) {
-    double[] X = HelperUtils.getX(path);
-    double[] Y = HelperUtils.getY(path);
-    Kmeans bestModel = new Kmeans(k, X, Y);
+    double[] x = HelperUtils.getX(path);
+    double[] y = HelperUtils.getY(path);
+    Kmeans ans = new Kmeans(k, x, y);
     double minErr = Double.MAX_VALUE;
     for (int i = 0; i < iterTimes; i++) {
-      Kmeans localModel = new Kmeans(k, X, Y);
-      localModel.run();
-      double localErr = localModel.getErr();
-//      System.out.println(localErr);
-      if (localErr < minErr) {
-        System.out.println(String.format("Last error: %f, New Error: %f", minErr, localErr));
-        minErr = localErr;
-        bestModel = localModel;
+      Kmeans curKmeans = new Kmeans(k, x, y);
+      curKmeans.run();
+      double error = curKmeans.getErr();
+      if (error < minErr) {
+        minErr = error;
+        ans = curKmeans;
       }
     }
-    return bestModel;
+    return ans;
   }
 
 }
