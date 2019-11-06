@@ -196,7 +196,7 @@ public class Kmeans {
     plotter.setDimensions((int) minBoundary[0], (int) maxBoundary[0], (int) minBoundary[1], (int) maxBoundary[1]);
 
     for (Cluster cluster : clusters) {
-      Color color = HelperUtils.randomColorGenerator();
+      Color color = HelperUtils.produceColor();
       for (int j = 0; j < cluster.getGroups().size(); j++) {
         double[] pos = cluster.getGroups().get(j).getCoordinate();
         plotter.addPoint((int) pos[0], (int) pos[1], color);

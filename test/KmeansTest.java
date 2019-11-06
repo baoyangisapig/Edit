@@ -2,33 +2,29 @@ import org.junit.Test;
 
 import java.util.List;
 
+/**
+ * the class represents the junit4 for Kmeans.
+ */
 public class KmeansTest {
   @Test
   public void testInput() {
     HelperUtils helper = new HelperUtils();
-    List<String> rawDataList = helper.readFromFile("./src/data/k-8.txt");
+    List<String> rawDataList = helper.readFromFile("./src/data/clusterdata-8.txt");
     int N = rawDataList.size();
     double[] X = new double[N];
     double[] Y = new double[N];
-
     for (int i = 0; i < N; i++) {
       String[] pos = rawDataList.get(i).split(" ");
       X[i] = Double.parseDouble(pos[0]);
       Y[i] = Double.parseDouble(pos[1]);
     }
-
-//    System.out.println(Arrays.toString(X));
-//    System.out.println(Arrays.toString(Y));
   }
 
   @Test
   public void testKmeansConstructor() {
-
-    String filePath = "./src/data/k_4.txt";
-
+    String filePath = "./src/data/clusterdata-4.txt";
     double[] X = HelperUtils.getX(filePath);
     double[] Y = HelperUtils.getY(filePath);
-
     Kmeans kmeans = new Kmeans(4, X, Y);
     kmeans.run();
     kmeans.drawOutput("kmeans.png");
