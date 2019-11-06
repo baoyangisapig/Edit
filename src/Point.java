@@ -1,6 +1,3 @@
-import java.util.ArrayList;
-import java.util.List;
-
 /**
  * @program: Assignment6
  * @description:
@@ -8,23 +5,23 @@ import java.util.List;
  * @create: 2019-10-29 17:53
  **/
 public class Point {
-  private double[] localArray;
+  private double[] coordinate;
   private int id;
   private int clusterId;  //which cluster it belongs to
   private double dist;     // the distance between the point and the cluster
 
-  public Point(int id, double[] localArray) {
+  public Point(int id, double[] coordinate) {
     this.id = id;
-    this.localArray = localArray;
+    this.coordinate = coordinate;
   }
 
-  public Point(double[] localArray) {
+  public Point(double[] coordinate) {
     this.id = -1; //This point does not belong to any class
-    this.localArray = localArray;
+    this.coordinate = coordinate;
   }
 
-  public double[] getlocalArray() {
-    return localArray;
+  public double[] getCoordinate() {
+    return coordinate;
   }
 
   public int getId() {

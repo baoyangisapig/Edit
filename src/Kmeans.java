@@ -1,74 +1,90 @@
 import java.awt.*;
-import java.io.IOException;
-import java.util.HashSet;
 import java.util.Set;
+import java.io.IOException;
 import java.util.Random;
+import java.util.HashSet;
 import java.lang.Math;
 
 /**
- * @program: Assignment6
- * @description:
- * @author: Nan Sun
- * @create: 2019-10-29 17:55
- **/
-
-/**
- * The class for Kmeans.
- * Thanks to article https://blog.csdn.net/xsdxs/article/details/53435667.
+ * Class for implementation of K-means.
  */
-public class Kmeans{
-
-  private Point[] points;
-  private Point[] clusterCenters;
-  private Cluster[] clusters;
-  private Util helper;
-  private int maxIterTimes;
-  private String outputPath;
+public class Kmeans {
 
   /**
-   * The construct function for Kmeans class.
+   * The K clusters of this KMeans.
+   */
+  private Cluster[] clusters;
+
+  /**
+   * Centers of the K clusters.
+   */
+  private Point[] clusterCenters;
+
+  /**
+   * Points of this KMeans.
+   */
+  private Point[] points;
+
+  /**
+   * Maximum iteration times.
+   */
+  private static int MAX_ITERATION_TIME = 100;
+
+  /**
+   * Utils for common functions including I/O operation and Math functions.
+   */
+  private HelperUtils utils;
+
+  /**
+   * Value of k for this K-means.
+   */
+  private int k;
+
+  /**
+   * Constructor of KMeans.
    *
-   * @param k k for K means
-   * @param x the X coordinates of the data sets.
-   * @param y the Y coordinates of the data sets.
+   * @param k Constant value k for k-means.
+   * @param x X coordinates.
+   * @param y Y coordinates.
    */
   public Kmeans(int k, double[] x, double[] y) {
-    // Initialize the helper object.
-    helper = new Util();
-    // Set the maximum iteration times.
-    maxIterTimes = 100;
-    // Initialize all the points in Point type
-    points = new Point[x.length];
-    for (int i = 0; i < x.length; i++) {
+    this.k = k;
+    initData(x.length, x, y);
+  }
+
+  private void initData(int length, double[] x, double[] y) {
+    utils = new HelperUtils();
+
+    // Initialize all the points.
+    points = new Point[length];
+    for (int i = 0; i < length; i++) {
       points[i] = new Point(new double[]{x[i], y[i]});
     }
 
-    // Generate the random index of the points as cluster centers.
-    Set<Integer> initialIndSet = new HashSet<>();
+    // Generate random k-sized collections of cluster centers.
+    Set<Integer> set = new HashSet<>();
     Random rand = new Random();
-    int ranNum;
     for (int i = 0; i < k; i++) {
-      do {
-        ranNum = rand.nextInt(x.length);
-      } while (initialIndSet.contains(ranNum));
-      initialIndSet.add(ranNum);
+      int index = rand.nextInt(length);
+      while (set.contains(index)) {
+        index = rand.nextInt(length);
+      }
+      set.add(index);
     }
-
-    Integer[] initialIndArr = new Integer[k];
-    initialIndSet.toArray(initialIndArr);
-
-    // Initialize the centerPosition array.
+    int[] centerIndex = new int[k];
+    int k = 0;
+    for (int num : set) {
+      centerIndex[k++] = num;
+    }
     clusterCenters = new Point[k];
     for (int i = 0; i < k; i++) {
-      clusterCenters[i] = new Point(new double[]{x[initialIndArr[i]], y[initialIndArr[i]]});
-//      System.out.println(clusterCenters[i].toString());
+      clusterCenters[i] = new Point(new double[]{x[centerIndex[i]], y[centerIndex[i]]});
     }
 
-    // Initialize the Cluster
+    // Initialize clusters.
     clusters = new Cluster[k];
     for (int i = 0; i < k; i++) {
       clusters[i] = new Cluster(i, clusterCenters[i]);
-//      System.out.println(clusters[i].toString());
     }
   }
 
@@ -79,7 +95,7 @@ public class Kmeans{
     for (int i = 0; i < points.length; i++) {
       double minDis = Integer.MAX_VALUE;
       for (int j = 0; j < clusters.length; j++) {
-        double tmpDis = (double) Math.min(helper.getEuclideanDis(points[i], clusters[j].getCenter()), minDis);
+        double tmpDis = (double) Math.min(utils.getEuclideanDis(points[i], clusters[j].getCenter()), minDis);
         if (tmpDis < minDis) {
           minDis = tmpDis;
           points[i].setClusterId(j);
@@ -108,15 +124,15 @@ public class Kmeans{
     for (int i = 0; i < clusters.length; i++) {
       double[] newCenter = new double[2];  // 2-dimension
       for (int j = 0; j < clusters[i].getMembers().size(); j++) {
-        newCenter[0] += clusters[i].getMembers().get(j).getlocalArray()[0];
-        newCenter[1] += clusters[i].getMembers().get(j).getlocalArray()[1];
+        newCenter[0] += clusters[i].getMembers().get(j).getCoordinate()[0];
+        newCenter[1] += clusters[i].getMembers().get(j).getCoordinate()[1];
       }
       newCenter[0] /= clusters[i].getMembers().size();
       newCenter[1] /= clusters[i].getMembers().size();
 
       double ne = 0;
       for (int j = 0; j < clusters[i].getMembers().size(); j++) {
-        ne += helper.getEuclideanDis(clusters[i].getMembers().get(j), new Point(newCenter));
+        ne += utils.getEuclideanDis(clusters[i].getMembers().get(j), new Point(newCenter));
       }
       ne /= clusters[i].getMembers().size();
 
@@ -137,7 +153,7 @@ public class Kmeans{
    */
   public void run() {
     int iterCnt = 0;
-    for (int i = 0; i < maxIterTimes; i++) {
+    for (int i = 0; i < MAX_ITERATION_TIME; i++) {
       clustering();  // Cluster all the points
       if (!calculateCenter()) {
         break;
@@ -158,7 +174,7 @@ public class Kmeans{
     double[] maxBoundary = new double[]{Double.MIN_VALUE, Double.MIN_VALUE};
     double[] minBoundary = new double[]{Double.MAX_VALUE, Double.MAX_VALUE};
     for (Point p : points) {
-      double[] pos = p.getlocalArray();
+      double[] pos = p.getCoordinate();
       if (pos[0] > maxBoundary[0]) {
         maxBoundary[0] = pos[0];
       }
@@ -183,9 +199,9 @@ public class Kmeans{
     plotter.setDimensions((int) minBoundary[0], (int) maxBoundary[0], (int) minBoundary[1], (int) maxBoundary[1]);
 
     for (Cluster cluster : clusters) {
-      Color color = Util.randomColorGenerator();
+      Color color = HelperUtils.randomColorGenerator();
       for (int j = 0; j < cluster.getMembers().size(); j++) {
-        double[] pos = cluster.getMembers().get(j).getlocalArray();
+        double[] pos = cluster.getMembers().get(j).getCoordinate();
         plotter.addPoint((int) pos[0], (int) pos[1], color);
       }
     }
@@ -219,8 +235,8 @@ public class Kmeans{
    * @return the best kmeans model
    */
   public static Kmeans runRANSAC(int k, int iterTimes, String path) {
-    double[] X = Util.getX(path);
-    double[] Y = Util.getY(path);
+    double[] X = HelperUtils.getX(path);
+    double[] Y = HelperUtils.getY(path);
     Kmeans bestModel = new Kmeans(k, X, Y);
     double minErr = Double.MAX_VALUE;
     for (int i = 0; i < iterTimes; i++) {

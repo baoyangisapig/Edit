@@ -1,13 +1,11 @@
 import org.junit.Test;
 
-import java.io.File;
-import java.util.Arrays;
 import java.util.List;
 
 public class KmeansTest {
   @Test
   public void testInput() {
-    Util helper = new Util();
+    HelperUtils helper = new HelperUtils();
     List<String> rawDataList = helper.readFromFile("./src/data/k-8.txt");
     int N = rawDataList.size();
     double[] X = new double[N];
@@ -24,13 +22,13 @@ public class KmeansTest {
   }
 
   @Test
-  public void testKmeansConstructor(){
+  public void testKmeansConstructor() {
 
     //String filePath = "./src/data/clusterdata-3.txt";
     String filePath = "./src/data/k_8.txt";
 
-    double[] X = Util.getX(filePath);
-    double[] Y = Util.getY(filePath);
+    double[] X = HelperUtils.getX(filePath);
+    double[] Y = HelperUtils.getY(filePath);
 
     Kmeans kmeans = new Kmeans(8, X, Y);
     kmeans.run();
@@ -38,11 +36,11 @@ public class KmeansTest {
   }
 
   @Test
-  public void testKmeansRANSAC(){
+  public void testKmeansRANSAC() {
     int k = 3;
     int maxIterTimes = 10;
     String filePath = "./src/data/clusterdata-3.txt";
-    Kmeans bestModel =  Kmeans.runRANSAC(k, maxIterTimes, filePath);
+    Kmeans bestModel = Kmeans.runRANSAC(k, maxIterTimes, filePath);
     bestModel.drawOutput("RANSAC.png");
   }
 }

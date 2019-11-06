@@ -5,8 +5,8 @@ public class LinearRegressionTest {
   public void testLR() {
     String filePath = "./src/data/L.txt";
 
-    double[] X = Util.getX(filePath);
-    double[] Y = Util.getY(filePath);
+    double[] X = HelperUtils.getX(filePath);
+    double[] Y = HelperUtils.getY(filePath);
 
     LinearRegression lr = new LinearRegression(X, Y);
     lr.drawOutput("lR.png");
