@@ -1,4 +1,4 @@
-import java.awt.*;
+import java.awt.Color;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
@@ -7,13 +7,17 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
+/**
+ * Helper utils providing basic functions such as Maths and I/O.
+ */
 public class HelperUtils {
 
   /**
-   * get the Geometric distance of two points.
-   * @param p1 first point.
-   * @param p2 second point.
-   * @return the distance of the two pointer.
+   * Get Euclid distance of two points.
+   *
+   * @param p1 First point.
+   * @param p2 Second point.
+   * @return Distance between the two pointer.
    */
   public double getEuclidDistance(Point p1, Point p2) {
     double count_dis = 0;
@@ -32,9 +36,10 @@ public class HelperUtils {
   }
 
   /**
-   * the class helps to read from file
-   * @param filePath the path of the file
-   * @return the result.
+   * Read string from file.
+   *
+   * @param filePath Path of file to read.
+   * @return String retrieved from the file.
    */
   public List<String> readFromFile(String filePath) {
     List<String> list = new ArrayList<String>();
@@ -50,43 +55,56 @@ public class HelperUtils {
         }
         bufferedReader.close();
         read.close();
-      }
-      else {
+      } else {
         System.out.println("the path is wrong");
       }
     } catch (Exception e) {
+      e.printStackTrace();
     }
 
     return list;
   }
 
-  public static double[] getX(String path){
+  /**
+   * Get all the x coordinates from file of path.
+   *
+   * @param path Path of file to read.
+   * @return All the x coordinates retrieved from file of path.
+   */
+  public static double[] getX(String path) {
     HelperUtils helper = new HelperUtils();
     List<String> rawDataList = helper.readFromFile(path);
     int size = rawDataList.size();
-    double[] X = new double[size];
+    double[] x = new double[size];
     for (int i = 0; i < size; i++) {
       String[] pos = rawDataList.get(i).split(" ");
-      X[i] = Double.parseDouble(pos[0]);
+      x[i] = Double.parseDouble(pos[0]);
     }
-    return X;
-  }
-
-  public static double[] getY(String path){
-    HelperUtils helper = new HelperUtils();
-    List<String> rawDataList = helper.readFromFile(path);
-    int size = rawDataList.size();
-    double[] Y = new double[size];
-    for (int i = 0; i < size; i++) {
-      String[] pos = rawDataList.get(i).split(" ");
-      Y[i] = Double.parseDouble(pos[1]);
-    }
-    return Y;
+    return x;
   }
 
   /**
-   * the class is to help to produce a random color.
-   * @return a random color
+   * Get all the y coordinates from file of path.
+   *
+   * @param path Path of file to read.
+   * @return All the y coordinates retrieved from file of path.
+   */
+  public static double[] getY(String path) {
+    HelperUtils helper = new HelperUtils();
+    List<String> rawDataList = helper.readFromFile(path);
+    int size = rawDataList.size();
+    double[] y = new double[size];
+    for (int i = 0; i < size; i++) {
+      String[] pos = rawDataList.get(i).split(" ");
+      y[i] = Double.parseDouble(pos[1]);
+    }
+    return y;
+  }
+
+  /**
+   * Generate a random color.
+   *
+   * @return Generated random color.
    */
   public static Color produceColor() {
     Random rand = new Random();

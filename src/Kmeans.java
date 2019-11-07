@@ -1,9 +1,8 @@
-import java.awt.*;
+import java.awt.Color;
 import java.util.Set;
 import java.io.IOException;
 import java.util.Random;
 import java.util.HashSet;
-import java.lang.Math;
 
 /**
  * Class for implementation of K-means.
@@ -83,7 +82,7 @@ public class Kmeans {
     clusters = new Cluster[k];
     for (int i = 0; i < k; i++) {
       Point curCenter = new Point(new double[]{x[centerIndex[i]], y[centerIndex[i]]});
-      clusters[i] = new Cluster(i, curCenter);
+      clusters[i] = new Cluster(curCenter);
     }
   }
 
@@ -101,12 +100,11 @@ public class Kmeans {
     for (int i = 0; i < points.length; i++) {
       double minDistance = Integer.MAX_VALUE;
       for (int j = 0; j < clusters.length; j++) {
-        double distance = Math.min(utils.getEuclidDistance(points[i], clusters[j].getCenter())
-                , minDistance);
+        double distance = Math.min(utils.getEuclidDistance(points[i], clusters[j].getCenter()),
+                minDistance);
         if (distance < minDistance) {
           minDistance = distance;
           points[i].setClusterId(j);
-          points[i].setDist(distance);
         }
       }
       int id = points[i].getClusterid();
@@ -193,7 +191,8 @@ public class Kmeans {
 
     plotter.setWidth((int) Math.max(Math.abs(minBoundary[0]), Math.abs(maxBoundary[0])) + 100);
     plotter.setHeight((int) Math.max(Math.abs(minBoundary[1]), Math.abs(maxBoundary[1])) + 100);
-    plotter.setDimensions((int) minBoundary[0], (int) maxBoundary[0], (int) minBoundary[1], (int) maxBoundary[1]);
+    plotter.setDimensions((int) minBoundary[0], (int) maxBoundary[0], (int) minBoundary[1],
+            (int) maxBoundary[1]);
 
     for (Cluster cluster : clusters) {
       Color color = HelperUtils.produceColor();
@@ -205,7 +204,7 @@ public class Kmeans {
     try {
       plotter.write(outputPath);
     } catch (IOException e) {
-
+      e.printStackTrace();
     }
   }
 

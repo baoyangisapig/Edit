@@ -14,33 +14,37 @@ public class LinearRegression {
   private double p3;
   final int Width = 400;
   final int Height = 400;
-  final int xmin=-300;
-  final int xmax=300;
-  final int ymin=-350;
-  final int ymax=350;
-  private double[] OX;
-  private double[] OY;
+  final int xmin = -300;
+  final int xmax = 300;
+  final int ymin = -350;
+  final int ymax = 350;
+  private double[] oX;
+  private double[] oY;
 
   /**
    * The Constructor for LinearRegression.
+   *
    * @param x coordinate x.
    * @param y coordinate y.
    */
   public LinearRegression(double[] x, double[] y) {
-    this.OX = x;
-    this.OY = y;
+    this.oX = x;
+    this.oY = y;
     if (x.length != y.length) {
       throw new IllegalArgumentException("the length is not equal");
     }
     int len = x.length;
-    double sum_x = 0.0, sum_y = 0.0;
+    double sum_x = 0.0;
+    double sum_y = 0.0;
     for (int i = 0; i < len; i++) {
       sum_x += x[i];
       sum_y += y[i];
     }
     double aver_x = sum_x / len;
     double aver_y = sum_y / len;
-    double f1 = 0.0, f2 = 0.0, f3 = 0.0;
+    double f1 = 0.0;
+    double f2 = 0.0;
+    double f3 = 0.0;
     for (int i = 0; i < len; i++) {
       f1 += (x[i] - aver_x) * (x[i] - aver_x);
       f2 += (y[i] - aver_y) * (y[i] - aver_y);
@@ -49,7 +53,7 @@ public class LinearRegression {
     double d = 2 * f3 / (f1 - f2);
     double t = Math.atan(d);
     double f = (f2 - f1) * Math.cos(t) - 2 * f3 * Math.sin(t);
-    t=f<=0?t+Math.toRadians(180.0):t;
+    t = f <= 0 ? t + Math.toRadians(180.0) : t;
     p1 = Math.cos(t / 2);
     p2 = Math.sin(t / 2);
     p3 = -p1 * aver_x - p2 * aver_y;
@@ -57,6 +61,7 @@ public class LinearRegression {
 
   /**
    * the function to draw the image.
+   *
    * @param outputPath the path of dataset.
    */
   public void drawOutput(String outputPath) {
@@ -66,8 +71,8 @@ public class LinearRegression {
     plotter.setWidth(Width);
     plotter.setHeight(Height);
     plotter.setDimensions(xmin, xmax, ymin, ymax);
-    for (int i = 0; i < OX.length; i++) {
-      plotter.addPoint((int) OX[i], (int) OY[i]);
+    for (int i = 0; i < oX.length; i++) {
+      plotter.addPoint((int) oX[i], (int) oY[i]);
     }
     plotter.addLine((int) point1[0], (int) point1[1], (int) point2[0], (int) point2[1]);
     try {
